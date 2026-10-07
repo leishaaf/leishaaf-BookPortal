@@ -37,7 +37,7 @@ const LoginPage = (props) => {
     <Segment inverted color="blue">
       <Header as="h2" icon textAlign="center">
         <Icon inverted color="yellow" name="sign-in" circular />
-        <Header.Content>{t("Log In")}</Header.Content>
+        <Header.Content>{t("Hello, Log In")}</Header.Content>
       </Header>
       <Formik initialValues={initialValues}
               validationSchema={schema}
