@@ -11,26 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: AWS SSM Send-Command
-        uses: peterkimzz/aws-ssm-send-command@v1.1.1
+      # AWS Academy lab credentials are temporary, so they need the session token too
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          # AWS access key id
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          # AWS secret access key
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # Where EC2 instance is
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.AWS_REGION }}
-          # AWS EC2 Instance id or ids
-          instance-ids: ${{ secrets.AWS_INSTANCE_ID }}
-          # Command execution location
-          # !!! The line below may vary depending on where your docker-compose file is located.
-          working-directory: /home/ubuntu
-          # Bash commands you want to execute
-          command: |
-            sudo docker-compose stop
-            sudo docker-compose rm -f
-            sudo docker-compose pull
-            sudo docker-compose up -d
-            sudo docker image prune -af
-          # Comment for Send-Command
-          comment: docker-compose.yml file re-pulls newer versions of book-portal images and runs them on the instance.
+
+      # !!! workingDirectory may vary depending on where your docker-compose file is located.
+      - name: AWS SSM Send-Command
+        run: |
+          aws ssm send-command \
+            --instance-ids "${{ secrets.AWS_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "docker-compose.yml file re-pulls newer versions of book-portal images and runs them on the instance." \
+            --parameters 'workingDirectory=["/home/ubuntu"],commands=["sudo docker compose stop","sudo docker compose rm -f","sudo docker compose pull","sudo docker compose up -d","sudo docker image prune -af"]'
