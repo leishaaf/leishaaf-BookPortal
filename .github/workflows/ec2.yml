@@ -23,8 +23,9 @@ jobs:
           # AWS EC2 Instance id or ids
           instance-ids: ${{ secrets.AWS_INSTANCE_ID }}
           # Command execution location
-          working-directory: /home/ec2-user
-          # Bash command you want to execute
+          # !!! The line below may vary depending on where your docker-compose file is located.
+          working-directory: /home/ubuntu
+          # Bash commands you want to execute
           command: |
             sudo docker-compose stop
             sudo docker-compose rm -f

@@ -1,16 +1,18 @@
-version: "3"
 services:
   book-portal-be:
-    image: ugurcanerdogan/book-portal-be:latest
+    build: ./book-portal-be
+    platform: linux/amd64
     container_name: "book-portal-be"
 
   book-portal-fe:
-    image: ugurcanerdogan/book-portal-fe:latest
+    build: ./book-portal-fe
+    platform: linux/amd64
     container_name: "book-portal-fe"
     depends_on:
       - book-portal-be
   proxy:
-    image: ugurcanerdogan/book-portal-proxy:latest
+    build: ./nginx
+    platform: linux/amd64
     container_name: "book-portal-proxy"
     restart: always
     ports:
